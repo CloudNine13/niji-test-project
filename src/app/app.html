@@ -1,8 +1,18 @@
 <header class="app-header">
   <h1>{{ i18n.t('app.title') }}</h1>
-  <button type="button" class="app-lang" (click)="i18n.toggle()">
-    {{ i18n.t('lang.active') }}
-  </button>
+  <div class="app-controls">
+    <button
+      type="button"
+      class="app-theme"
+      [attr.aria-label]="i18n.t(theme.theme() === 'light' ? 'theme.toDark' : 'theme.toLight')"
+      (click)="theme.toggle()"
+    >
+      <span class="theme-icon" [class.theme-icon-moon]="theme.theme() === 'light'"></span>
+    </button>
+    <button type="button" class="app-lang" (click)="i18n.toggle()">
+      {{ i18n.t('lang.active') }}
+    </button>
+  </div>
 </header>
 <main class="app-main">
   <router-outlet />

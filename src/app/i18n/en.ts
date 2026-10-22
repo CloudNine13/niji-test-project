@@ -16,6 +16,8 @@ export const en = {
   'stats.turns': 'Turns',
   'stats.shots': 'Arrows shot',
   'lang.active': 'EN',
+  'theme.toDark': 'Switch to dark theme',
+  'theme.toLight': 'Switch to light theme',
   'dir.N': 'N',
   'dir.E': 'E',
   'dir.S': 'S',
