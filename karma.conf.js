@@ -5,12 +5,7 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine'],
-    plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage'),
-    ],
+    plugins: [require('karma-jasmine'), require('karma-chrome-launcher')],
     client: {
       jasmine: {
         // you can add configuration options for Jasmine here
@@ -19,15 +14,7 @@ module.exports = function (config) {
         // or set a specific seed with `seed: 4321`
       },
     },
-    jasmineHtmlReporter: {
-      suppressAll: true, // removes the duplicated traces
-    },
-    coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/niji-test-project'),
-      subdir: '.',
-      reporters: [{ type: 'html' }, { type: 'text-summary' }],
-    },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress'],
     browsers: ['ChromeHeadless'],
     restartOnFileChange: true,
   });
