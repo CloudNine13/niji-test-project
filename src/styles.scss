@@ -1,5 +1,9 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+  --bg: #f6f4ef;
+  --fg: #1e1c19;
+  --surface: #ffffff;
+  --border: #8b8378;
   font-family:
     system-ui,
     -apple-system,
@@ -8,8 +12,18 @@
   line-height: 1.5;
 }
 
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #15171a;
+  --fg: #e9e6df;
+  --surface: #23262b;
+  --border: #5d646e;
+}
+
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--fg);
 }
 
 h1,
@@ -22,10 +36,15 @@ button,
 select {
   font: inherit;
   padding: 0.35rem 0.6rem;
-  border: 1px solid currentColor;
+  border: 1px solid var(--border);
   border-radius: 0.25rem;
-  background: transparent;
-  color: inherit;
+  background-color: var(--surface);
+  color: var(--fg);
+}
+
+option {
+  background-color: var(--surface);
+  color: var(--fg);
 }
 
 button:not(:disabled) {

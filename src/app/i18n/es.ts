@@ -18,6 +18,8 @@ export const es: Record<TranslationKey, string> = {
   'stats.turns': 'Giros',
   'stats.shots': 'Flechas disparadas',
   'lang.active': 'ES',
+  'theme.toDark': 'Cambiar a tema oscuro',
+  'theme.toLight': 'Cambiar a tema claro',
   'dir.N': 'N',
   'dir.E': 'E',
   'dir.S': 'S',
