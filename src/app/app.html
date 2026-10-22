@@ -1,1 +1,9 @@
-<router-outlet />
+<header class="app-header">
+  <h1>{{ i18n.t('app.title') }}</h1>
+  <button type="button" class="app-lang" (click)="i18n.toggle()">
+    {{ i18n.t('lang.active') }}
+  </button>
+</header>
+<main class="app-main">
+  <router-outlet />
+</main>

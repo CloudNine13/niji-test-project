@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+h2 {
+  margin-bottom: 1rem;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 22rem;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.field select {
+  min-width: 6rem;
+}

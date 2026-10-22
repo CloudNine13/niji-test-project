@@ -1,0 +1,30 @@
+<section class="config">
+  <h2>{{ i18n.t('setup.title') }}</h2>
+  <div class="fields">
+    <label class="field">
+      <span>{{ i18n.t('setup.boardSize') }}</span>
+      <select (change)="setSize($event)">
+        @for (option of sizeOptions; track option) {
+          <option [value]="option" [selected]="option === size()">{{ option }}</option>
+        }
+      </select>
+    </label>
+    <label class="field">
+      <span>{{ i18n.t('setup.pits') }}</span>
+      <select (change)="setPits($event)">
+        @for (option of pitOptions(); track option) {
+          <option [value]="option" [selected]="option === pits()">{{ option }}</option>
+        }
+      </select>
+    </label>
+    <label class="field">
+      <span>{{ i18n.t('setup.arrows') }}</span>
+      <select (change)="setArrows($event)">
+        @for (option of arrowOptions; track option) {
+          <option [value]="option" [selected]="option === arrows()">{{ option }}</option>
+        }
+      </select>
+    </label>
+  </div>
+  <button type="button" (click)="start()">{{ i18n.t('setup.start') }}</button>
+</section>
