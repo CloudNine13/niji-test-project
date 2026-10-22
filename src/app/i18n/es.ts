@@ -38,4 +38,5 @@ export const es: Record<TranslationKey, string> = {
   'perception.scream': 'Un grito resuena.',
   'perception.bump': 'Oyes un golpe.',
   'game.won': 'Escapaste con el oro en {actions} acciones, {time}',
+  'grid.exit': 'Salida',
 };
