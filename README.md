@@ -18,7 +18,7 @@ You do not need a database, an API key or any other service. The whole game runs
    cd niji-test-project
    ```
 
-2. Install the dependencies. You only need to do this once, and it requires an internet connection:
+2. Install the dependencies:
 
    ```bash
    npm install
@@ -30,17 +30,7 @@ You do not need a database, an API key or any other service. The whole game runs
    npm start
    ```
 
-4. Open <http://localhost:4200> in your browser. The page reloads by itself when you change the source code.
-
-5. Press `Ctrl+C` in the terminal to stop the server.
-
-If port 4200 is already in use, start the app on another port:
-
-```bash
-npm start -- --port 4300
-```
-
-Then open <http://localhost:4300>.
+4. Open <http://localhost:4200> in your browser.
 
 ## How to play
 
@@ -57,3 +47,6 @@ The project has unit tests. They run in Chrome, so Chrome has to be installed:
 ```bash
 npm test -- --watch=false --browsers=ChromeHeadless
 ```
+
+If Karma cannot find Chrome, export `CHROME_BIN` (for example
+`export CHROME_BIN=/usr/bin/google-chrome`).
