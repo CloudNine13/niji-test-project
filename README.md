@@ -1,8 +1,8 @@
 # Hunt the Wumpus (Angular)
 
 Angular single-page implementation of the classic Hunt the Wumpus game
-(selection test). **Status: scaffold only** — configuration and game screens are
-not implemented yet.
+(selection test). **Status: complete** — configurable board, full game screen,
+English/Spanish UI, and unit tests.
 
 ## Requirements
 
