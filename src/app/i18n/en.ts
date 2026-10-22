@@ -36,6 +36,7 @@ export const en = {
   'perception.scream': 'A scream echoes.',
   'perception.bump': 'You hear a bump.',
   'game.won': 'You escaped with the gold in {actions} actions, {time}',
+  'grid.exit': 'Exit',
 } as const;
 
 export type TranslationKey = keyof typeof en;

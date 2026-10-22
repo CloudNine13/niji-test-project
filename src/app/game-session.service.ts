@@ -6,9 +6,11 @@ import type { GameConfig } from './game-engine/types';
 export class GameSessionService {
   readonly engine = signal<GameEngine | null>(null);
   readonly config = signal<GameConfig | null>(null);
+  readonly startedAt = signal<number | null>(null);
 
   start(config: GameConfig): void {
     this.config.set(config);
     this.engine.set(new GameEngine(config));
+    this.startedAt.set(Date.now());
   }
 }

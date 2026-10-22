@@ -1,0 +1,86 @@
+@if (view(); as view) {
+  <section class="game">
+    <dl class="stats">
+      <div>
+        <dt>{{ i18n.t('stats.time') }}</dt>
+        <dd>{{ elapsed() }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('stats.moves') }}</dt>
+        <dd>{{ view.stats.moves }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('stats.turns') }}</dt>
+        <dd>{{ view.stats.turns }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n.t('stats.shots') }}</dt>
+        <dd>{{ view.stats.shots }}</dd>
+      </div>
+    </dl>
+    <div class="board" [style.grid-template-columns]="'repeat(' + view.size + ', 1fr)'">
+      @for (cell of cells(); track cell.index) {
+        <div class="cell" [class.cell-exit]="cell.exit">
+          @if (cell.exit) {
+            <span class="exit">{{ i18n.t('grid.exit') }}</span>
+          }
+          @if (cell.hunter) {
+            <span class="hunter">{{ directionLabel(view.direction) }}</span>
+          }
+        </div>
+      }
+    </div>
+    <div class="actions">
+      <button
+        type="button"
+        class="advance"
+        [disabled]="view.status !== 'playing'"
+        (click)="advance()"
+      >
+        {{ i18n.t('game.advance') }}
+      </button>
+      <button
+        type="button"
+        class="turn-left"
+        [disabled]="view.status !== 'playing'"
+        (click)="turnLeft()"
+      >
+        {{ i18n.t('game.turnLeft') }}
+      </button>
+      <button
+        type="button"
+        class="turn-right"
+        [disabled]="view.status !== 'playing'"
+        (click)="turnRight()"
+      >
+        {{ i18n.t('game.turnRight') }}
+      </button>
+      <button
+        type="button"
+        class="shoot"
+        [disabled]="view.status !== 'playing' || view.arrowsLeft === 0"
+        (click)="shoot()"
+      >
+        {{ i18n.t('game.shoot') }}
+      </button>
+      <button
+        type="button"
+        class="exit"
+        [disabled]="view.status !== 'playing' || !view.canExit"
+        (click)="exit()"
+      >
+        {{ i18n.t('game.exit') }}
+      </button>
+      @if (view.status !== 'playing') {
+        <button type="button" class="new-game" (click)="newGame()">
+          {{ i18n.t('game.newGame') }}
+        </button>
+      }
+    </div>
+    <div class="log" #logBox>
+      @for (line of log(); track $index) {
+        <div class="log-line">{{ lineText(line) }}</div>
+      }
+    </div>
+  </section>
+}
