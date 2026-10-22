@@ -78,8 +78,8 @@
       }
     </div>
     <div class="log" #logBox>
-      @for (line of log(); track $index) {
-        <div class="log-line">{{ lineText(line) }}</div>
+      @for (entry of log(); track $index) {
+        <div class="log-entry">{{ entryText(entry) }}</div>
       }
     </div>
   </section>

@@ -74,7 +74,7 @@ function totalActions(stats: GameStats): number {
 export class Game {
   readonly i18n = inject(I18nService);
   readonly view = signal<GameView | null>(null);
-  readonly log = signal<readonly LogLine[]>([]);
+  readonly log = signal<readonly (readonly LogLine[])[]>([]);
   readonly elapsed = computed(() => formatDuration(this.elapsedMs()));
   readonly cells = computed<readonly Cell[]>(() => {
     const view = this.view();
@@ -109,6 +109,10 @@ export class Game {
 
   directionLabel(direction: Direction): string {
     return this.i18n.t(DIRECTION_KEYS[direction]);
+  }
+
+  entryText(entry: readonly LogLine[]): string {
+    return entry.map((line) => this.lineText(line)).join(' ');
   }
 
   lineText(line: LogLine): string {
@@ -152,7 +156,7 @@ export class Game {
     const result = action(this.engine);
     this.sync();
     this.elapsedMs.set(Date.now() - this.startedAt);
-    this.log.update((lines) => [...lines, ...this.lines(result)]);
+    this.log.update((entries) => [...entries, ...this.entries(result)]);
     this.scrollLog();
   }
 
@@ -180,35 +184,39 @@ export class Game {
     });
   }
 
-  private lines(result: ActionResult): readonly LogLine[] {
+  private entries(result: ActionResult): readonly (readonly LogLine[])[] {
     const { outcome, perceptions } = result;
     switch (outcome.kind) {
       case 'moved':
         return [
-          { key: 'log.moved', params: { row: outcome.to.row, col: outcome.to.col } },
-          ...(outcome.pickedGold ? [{ key: 'log.goldPicked' as const }] : []),
-          ...this.perceptionLines(perceptions),
+          [
+            { key: 'log.moved', params: { row: outcome.to.row, col: outcome.to.col } },
+            ...(outcome.pickedGold ? [{ key: 'log.goldPicked' as const }] : []),
+            ...this.perceptionLines(perceptions),
+          ],
         ];
       case 'bumped':
-        return [{ key: 'log.bumped', params: { row: outcome.at.row, col: outcome.at.col } }];
+        return [[{ key: 'log.bumped', params: { row: outcome.at.row, col: outcome.at.col } }]];
       case 'turned':
-        return [{ key: 'log.turned', facing: outcome.facing }];
+        return [[{ key: 'log.turned', facing: outcome.facing }]];
       case 'shot':
-        return [{ key: outcome.hit ? 'log.shotHit' : 'log.shotMiss' }];
+        return [[{ key: outcome.hit ? 'log.shotHit' : 'log.shotMiss' }]];
       case 'fell-into-pit':
-        return [{ key: 'log.deathPit', params: { row: outcome.at.row, col: outcome.at.col } }];
+        return [[{ key: 'log.deathPit', params: { row: outcome.at.row, col: outcome.at.col } }]];
       case 'killed-by-wumpus':
-        return [{ key: 'log.deathWumpus', params: { row: outcome.at.row, col: outcome.at.col } }];
+        return [[{ key: 'log.deathWumpus', params: { row: outcome.at.row, col: outcome.at.col } }]];
       case 'escaped':
         return [
-          { key: 'log.escaped' },
-          {
-            key: 'game.won',
-            params: { actions: totalActions(result.stats), time: this.elapsed() },
-          },
+          [{ key: 'log.escaped' }],
+          [
+            {
+              key: 'game.won',
+              params: { actions: totalActions(result.stats), time: this.elapsed() },
+            },
+          ],
         ];
       case 'ignored':
-        return [{ key: 'log.ignored' }];
+        return [[{ key: 'log.ignored' }]];
     }
   }
 

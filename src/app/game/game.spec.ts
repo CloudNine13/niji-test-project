@@ -64,7 +64,7 @@ describe('Game', () => {
   };
 
   const logLines = (fixture: ComponentFixture<Game>): readonly string[] =>
-    Array.from(fixture.nativeElement.querySelectorAll('.log-line') as NodeListOf<HTMLElement>).map(
+    Array.from(fixture.nativeElement.querySelectorAll('.log-entry') as NodeListOf<HTMLElement>).map(
       (line) => line.textContent?.trim() ?? '',
     );
 
@@ -98,7 +98,7 @@ describe('Game', () => {
 
     click(fixture, ['.advance']);
 
-    expect(logLines(fixture)).toEqual(['Moved to (1,0).', 'You feel a breeze.']);
+    expect(logLines(fixture)).toEqual(['Moved to (1,0). You feel a breeze.']);
   });
 
   it('logs a hit as a scream and a miss as silence', () => {
