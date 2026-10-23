@@ -63,14 +63,20 @@
 .icon {
   width: 62%;
   aspect-ratio: 1;
+  background: var(--cell-icon) center / contain no-repeat;
+}
+
+.icon-hunter,
+.icon-pit {
   background-color: currentColor;
+  background-image: none;
   -webkit-mask: var(--cell-icon) center / contain no-repeat;
   mask: var(--cell-icon) center / contain no-repeat;
 }
 
 .icon-exit {
-  --cell-icon: url('/assets/exit.svg');
-  opacity: 0.8;
+  --cell-icon: url('/assets/exit.png');
+  opacity: 0.9;
 }
 
 .icon-hunter {
@@ -78,7 +84,7 @@
 }
 
 .icon-wumpus {
-  --cell-icon: url('/assets/wumpus.svg');
+  --cell-icon: url('/assets/wumpus.png');
 }
 
 .icon-pit {
@@ -87,9 +93,8 @@
 }
 
 .icon-gold {
-  --cell-icon: url('/assets/gold.svg');
+  --cell-icon: url('/assets/gold.png');
 }
-
 .hint {
   position: absolute;
   right: 0.1rem;
