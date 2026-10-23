@@ -90,7 +90,7 @@ function totalActions(stats: GameStats): number {
 export class Game {
   readonly i18n = inject(I18nService);
   readonly view = signal<GameView | null>(null);
-  readonly fogOn = signal(true);
+  readonly fogOn = signal(false);
   readonly log = signal<readonly (readonly LogLine[])[]>([]);
   readonly elapsed = computed(() => formatDuration(this.elapsedMs()));
   readonly cells = computed<readonly Cell[]>(() => {
@@ -99,27 +99,27 @@ export class Game {
       return [];
     }
     const { size, layout, perceptions } = view;
-    const fog = this.fogOn();
-    const revealed = view.status !== 'playing';
+    const revealAll = view.status !== 'playing' || this.fogOn();
     const pits = new Set(layout.pits.map((pit) => pit.row * size + pit.col));
     const wumpus = layout.wumpus.row * size + layout.wumpus.col;
     const gold = layout.gold.row * size + layout.gold.col;
+    const exit = layout.exit.row * size + layout.exit.col;
     return Array.from({ length: size ** 2 }, (_, index) => {
       const row = Math.floor(index / size);
       const col = index % size;
       const hunter = layout.hunter.row === row && layout.hunter.col === col;
-      const exit = layout.exit.row === row && layout.exit.col === col;
+      const fogged = !revealAll && !view.visitedCells.has(index);
       return {
         index,
         hunter,
-        exit,
-        wumpus: revealed && index === wumpus,
-        pit: revealed && pits.has(index),
-        gold: revealed && !view.hasGold && index === gold,
+        exit: exit === index && !fogged,
+        wumpus: revealAll && index === wumpus,
+        pit: revealAll && pits.has(index),
+        gold: revealAll && !view.hasGold && index === gold,
         stench: hunter && perceptions.stench,
         breeze: hunter && perceptions.breeze,
         glint: hunter && perceptions.glitter,
-        fogged: !revealed && fog && !hunter && !exit && !view.visitedCells.has(index),
+        fogged,
       };
     });
   });
