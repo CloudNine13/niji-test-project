@@ -91,15 +91,20 @@ describe('Game', () => {
     TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
   });
 
-  it('renders the hunter arrow, the exit image, and no hazard images on the grid', () => {
+  it('renders only the hunter while the switch is off and nothing is visited yet', () => {
     const fixture = create(WIN_BOARD);
     const cells = fixture.nativeElement.querySelectorAll('.cell') as NodeListOf<HTMLElement>;
 
     expect(cells.length).toBe(16);
     expect(cells[0].querySelector('.icon-hunter')).not.toBeNull();
     expect(cells[0].textContent?.trim()).toBe('');
-    expect(cells[15].querySelector('.icon-exit')?.getAttribute('aria-label')).toBe('Exit');
-    expect(cells[5].children.length).toBe(0);
+    expect(cells[15].children.length).toBe(0);
+    expect(cells[15].classList.contains('cell-exit')).toBeFalse();
+    expect(fixture.nativeElement.querySelector('.icon-exit')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.icon-wumpus')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.icon-pit')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.icon-gold')).toBeNull();
+    expect(fogged(fixture)).toHaveSize(15);
   });
 
   it('rotates the hunter arrow to the facing direction', () => {
@@ -142,9 +147,9 @@ describe('Game', () => {
   it('shows the glint hint only while the gold is adjacent', () => {
     const fixture = create({ ...WIN_BOARD, gold: 1, pits: [] });
 
-    expect(
-      fixture.nativeElement.querySelector('.hint-glint')?.getAttribute('aria-label'),
-    ).toBe('Glint');
+    expect(fixture.nativeElement.querySelector('.hint-glint')?.getAttribute('aria-label')).toBe(
+      'Glint',
+    );
 
     click(fixture, ['.turn-left', '.advance']);
 
@@ -253,24 +258,42 @@ describe('Game', () => {
     expect(TestBed.inject(Router).url).toBe('/setup');
   });
 
-  it('fogs every unvisited cell except the hunter and the exit', () => {
+  it('starts with the fog switch off and every cell fogged except the hunter', () => {
     const fixture = create(WIN_BOARD);
-    const cells = fogged(fixture);
+    const toggle = fogToggle(fixture);
 
-    expect(cells).toHaveSize(14);
-    expect(cells).not.toContain(0);
-    expect(cells).not.toContain(15);
+    expect(toggle.textContent?.trim()).toBe('Fog of war: off');
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(fogged(fixture)).toHaveSize(15);
+    expect(fogged(fixture)).not.toContain(0);
   });
 
-  it('reveals only the cells reached by an advance', () => {
+  it('reveals every cell, the exit and the hazards included, when the switch is on', () => {
     const fixture = create(WIN_BOARD);
+
+    fogToggle(fixture).click();
+    fixture.detectChanges();
+
+    const cell = (index: number): HTMLElement =>
+      fixture.nativeElement.querySelectorAll('.cell')[index] as HTMLElement;
+
+    expect(fogged(fixture)).toEqual([]);
+    expect(cell(15).querySelector('.icon-exit')?.getAttribute('aria-label')).toBe('Exit');
+    expect(cell(12).querySelector('.icon-wumpus')).not.toBeNull();
+    expect(cell(1).querySelector('.icon-pit')).not.toBeNull();
+    expect(cell(5).querySelector('.icon-gold')).not.toBeNull();
+  });
+
+  it('reveals only the cells reached by an advance while the switch is off', () => {
+    const fixture = create(WIN_BOARD);
+
+    click(fixture, ['.advance']);
+    expect(fogged(fixture)).toHaveSize(14);
+    expect(fogged(fixture)).not.toContain(4);
+    expect(fixture.nativeElement.querySelector('.icon-pit')).toBeNull();
 
     click(fixture, ['.advance']);
     expect(fogged(fixture)).toHaveSize(13);
-    expect(fogged(fixture)).not.toContain(4);
-
-    click(fixture, ['.advance']);
-    expect(fogged(fixture)).toHaveSize(12);
     expect(fogged(fixture)).not.toContain(8);
   });
 
@@ -283,24 +306,47 @@ describe('Game', () => {
     expect(fogged(fixture)).toEqual(before);
   });
 
-  it('lifts the fog from every cell when the switch is off', () => {
+  it('shows the exit only once its cell is visited while the switch is off', () => {
+    const fixture = create({ ...WIN_BOARD, exit: 4 });
+
+    expect(fixture.nativeElement.querySelector('.icon-exit')).toBeNull();
+    expect(fogged(fixture)).toContain(4);
+
+    click(fixture, ['.advance']);
+
+    const exitCell = fixture.nativeElement.querySelectorAll('.cell')[4] as HTMLElement;
+    expect(exitCell.querySelector('.icon-exit')?.getAttribute('aria-label')).toBe('Exit');
+    expect(exitCell.classList.contains('cell-fog')).toBeFalse();
+  });
+
+  it('keeps the collected gold hidden in the fog-on reveal', () => {
+    const fixture = create(WIN_BOARD);
+
+    click(fixture, toExitWithGold);
+    fogToggle(fixture).click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.icon-gold')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.icon-pit')).toHaveSize(1);
+    expect(fixture.nativeElement.querySelectorAll('.icon-wumpus')).toHaveSize(1);
+  });
+
+  it('toggles the fog on and off mid-game', () => {
     const fixture = create(WIN_BOARD);
     const toggle = fogToggle(fixture);
 
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(fogged(fixture)).toEqual([]);
     expect(toggle.textContent?.trim()).toBe('Fog of war: on');
     expect(toggle.getAttribute('aria-pressed')).toBe('true');
 
     toggle.click();
     fixture.detectChanges();
 
-    expect(fogged(fixture)).toEqual([]);
+    expect(fogged(fixture)).toHaveSize(15);
     expect(toggle.textContent?.trim()).toBe('Fog of war: off');
     expect(toggle.getAttribute('aria-pressed')).toBe('false');
-
-    toggle.click();
-    fixture.detectChanges();
-
-    expect(fogged(fixture)).toHaveSize(14);
-    expect(toggle.textContent?.trim()).toBe('Fog of war: on');
   });
 });

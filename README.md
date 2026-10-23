@@ -36,7 +36,7 @@ You do not need a database, an API key or any other service. The whole game runs
 
 The first screen asks for three things: board size, number of pits and number of arrows. Use the dropdowns, then press Start game.
 
-On the game screen the grid shows where you are, which way you face and where the exit is. The buttons under the board let you advance, turn left, turn right, shoot an arrow or exit. The text box underneath records every move and tells you what you notice nearby. A stench means the Wumpus is next to you. A breeze means there is a pit next to you. A glint means the gold is next to you.
+On the game screen the grid shows where you are and which way you face. By default the fog of war hides everything you have not visited, the exit included; the Fog of war button reveals the whole board (hunter, exit, pits, gold and Wumpus) so you can plan your route. The buttons under the board let you advance, turn left, turn right, shoot an arrow or exit. The text box underneath records every move and tells you what you notice nearby. A stench means the Wumpus is next to you. A breeze means there is a pit next to you. A glint means the gold is next to you.
 
 Walk onto the gold to pick it up. Once you have it, walk to the exit and press Exit to win. If you step into a pit or onto the Wumpus, the game ends and you can start a new one with the same settings.
 
