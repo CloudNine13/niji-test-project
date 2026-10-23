@@ -41,6 +41,20 @@
   border-style: dashed;
 }
 
+.cell-fog {
+  border-color: var(--border);
+  background-color: rgb(0 0 0 / 0.3);
+}
+
+.cell-fog > * {
+  visibility: hidden;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .hunter {
   font-weight: 700;
 }

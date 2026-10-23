@@ -11,6 +11,8 @@ export const en = {
   'game.shoot': 'Shoot arrow',
   'game.exit': 'Exit',
   'game.newGame': 'New game',
+  'game.fogOn': 'Fog of war: on',
+  'game.fogOff': 'Fog of war: off',
   'stats.time': 'Time',
   'stats.moves': 'Moves',
   'stats.turns': 'Turns',

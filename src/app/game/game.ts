@@ -31,6 +31,7 @@ interface GameView {
   readonly status: GameStatus;
   readonly stats: GameStats;
   readonly canExit: boolean;
+  readonly visitedCells: ReadonlySet<number>;
 }
 
 interface LogLine {
@@ -43,6 +44,7 @@ interface Cell {
   readonly index: number;
   readonly hunter: boolean;
   readonly exit: boolean;
+  readonly fogged: boolean;
 }
 
 const DIRECTION_KEYS: Readonly<Record<Direction, TranslationKey>> = {
@@ -74,6 +76,7 @@ function totalActions(stats: GameStats): number {
 export class Game {
   readonly i18n = inject(I18nService);
   readonly view = signal<GameView | null>(null);
+  readonly fogOn = signal(true);
   readonly log = signal<readonly (readonly LogLine[])[]>([]);
   readonly elapsed = computed(() => formatDuration(this.elapsedMs()));
   readonly cells = computed<readonly Cell[]>(() => {
@@ -81,13 +84,17 @@ export class Game {
     if (!view) {
       return [];
     }
+    const fog = this.fogOn();
     return Array.from({ length: view.size ** 2 }, (_, index) => {
       const row = Math.floor(index / view.size);
       const col = index % view.size;
+      const hunter = view.position.row === row && view.position.col === col;
+      const exit = view.exitPosition.row === row && view.exitPosition.col === col;
       return {
         index,
-        hunter: view.position.row === row && view.position.col === col,
-        exit: view.exitPosition.row === row && view.exitPosition.col === col,
+        hunter,
+        exit,
+        fogged: fog && !hunter && !exit && !view.visitedCells.has(index),
       };
     });
   });
@@ -149,6 +156,10 @@ export class Game {
     void this.router.navigateByUrl('/setup');
   }
 
+  toggleFog(): void {
+    this.fogOn.update((fog) => !fog);
+  }
+
   private apply(action: (engine: GameEngine) => ActionResult): void {
     if (!this.engine) {
       return;
@@ -181,6 +192,7 @@ export class Game {
       status: engine.status,
       stats: engine.stats,
       canExit: engine.canExit(),
+      visitedCells: engine.visitedCells,
     });
   }
 

@@ -13,6 +13,8 @@ export const es: Record<TranslationKey, string> = {
   'game.shoot': 'Disparar flecha',
   'game.exit': 'Salir',
   'game.newGame': 'Nueva partida',
+  'game.fogOn': 'Niebla de guerra: activada',
+  'game.fogOff': 'Niebla de guerra: desactivada',
   'stats.time': 'Tiempo',
   'stats.moves': 'Movimientos',
   'stats.turns': 'Giros',
