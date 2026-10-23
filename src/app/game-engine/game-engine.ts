@@ -130,7 +130,7 @@ export class GameEngine {
     if (pickedGold) {
       this.#hasGold = true;
     }
-    return this.#result({ kind: 'moved', to: target, pickedGold }, { glitter: pickedGold });
+    return this.#result({ kind: 'moved', to: target, pickedGold });
   }
 
   turnLeft(): ActionResult {
@@ -198,7 +198,7 @@ export class GameEngine {
     return {
       stench: this.#wumpusAlive && adjacent.some((cell) => this.#sameCell(cell, this.#wumpus)),
       breeze: adjacent.some((cell) => this.#pits.has(this.#index(cell))),
-      glitter: !this.#hasGold && this.#sameCell(this.#position, this.#gold),
+      glitter: !this.#hasGold && adjacent.some((cell) => this.#sameCell(cell, this.#gold)),
       bump: false,
       scream: false,
     };

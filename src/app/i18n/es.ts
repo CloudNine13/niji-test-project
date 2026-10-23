@@ -49,4 +49,5 @@ export const es: Record<TranslationKey, string> = {
   'grid.gold': 'Oro',
   'grid.stench': 'Hedor',
   'grid.breeze': 'Brisa',
+  'grid.glint': 'Destello',
 };

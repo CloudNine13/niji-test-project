@@ -111,6 +111,13 @@
   bottom: 0.1rem;
 }
 
+.hint-glint {
+  --cell-icon: url('/assets/gold.svg');
+  top: 0.1rem;
+  right: auto;
+  left: 0.1rem;
+}
+
 .log-entry {
   font-size: 0.8rem;
 }

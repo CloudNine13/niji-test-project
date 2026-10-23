@@ -50,14 +50,21 @@ describe('GameEngine advance', () => {
     expect(engine.size).toBe(4);
   });
 
-  it('picks the gold up automatically and stops reporting glitter once the cell is left', () => {
+  it('reports glitter when orthogonally adjacent to gold and clears it on pickup', () => {
     const engine = engineFor(goldAhead, 1);
 
-    const picked = engine.advance();
-    const left = engine.advance();
+    expect(engine.perceptions.glitter).toBeTrue();
 
-    expect(picked.perceptions.glitter).toBeTrue();
+    const diagonalEngine = engineFor({ ...goldAhead, start: 1 }, 1);
+    expect(diagonalEngine.perceptions.glitter).toBeFalse();
+
+    const picked = engine.advance();
+
+    expect(picked.outcome).toEqual({ kind: 'moved', to: position(1, 2), pickedGold: true });
+    expect(picked.perceptions.glitter).toBeFalse();
     expect(engine.hasGold).toBeTrue();
+
+    const left = engine.advance();
     expect(left.outcome).toEqual({ kind: 'moved', to: position(1, 3), pickedGold: false });
     expect(left.perceptions.glitter).toBeFalse();
     expect(engine.hasGold).toBeTrue();
@@ -140,7 +147,7 @@ describe('GameEngine perceptions', () => {
 
   it('ignores hazards that only touch the hunter diagonally', () => {
     const engine = engineFor(
-      { size: 4, facing: 'N', start: 5, exit: 3, wumpus: 0, gold: 6, pits: [10] },
+      { size: 4, facing: 'N', start: 5, exit: 3, wumpus: 0, gold: 2, pits: [10] },
       1,
     );
 
