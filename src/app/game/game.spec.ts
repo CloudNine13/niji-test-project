@@ -217,6 +217,16 @@ describe('Game', () => {
     expect(button(fixture, '.exit').disabled).toBeFalse();
   });
 
+  it('notifies when the hunter reaches the exit without the gold', () => {
+    const fixture = create({ ...WIN_BOARD, facing: 'S', exit: 4, gold: 7, pits: [] });
+
+    click(fixture, ['.advance']);
+
+    expect(logLines(fixture)).toEqual([
+      'Moved to (1,0). You are at the exit, but you need the gold to escape.',
+    ]);
+  });
+
   it('ends the game when the hunter advances into a pit and offers a new game', () => {
     const fixture = create(DEATH_BOARD);
 

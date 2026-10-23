@@ -34,6 +34,7 @@ export const en = {
   'log.deathWumpus': 'The Wumpus ate you at ({row},{col}).',
   'log.escaped': 'You escaped through the exit.',
   'log.ignored': 'The game is over.',
+  'log.exitNeedsGold': 'You are at the exit, but you need the gold to escape.',
   'perception.stench': 'You smell something terrible.',
   'perception.breeze': 'You feel a breeze.',
   'perception.glitter': 'You see a glint of gold.',

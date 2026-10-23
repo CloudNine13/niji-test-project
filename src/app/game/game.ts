@@ -231,14 +231,22 @@ export class Game {
   private entries(result: ActionResult): readonly (readonly LogLine[])[] {
     const { outcome, perceptions } = result;
     switch (outcome.kind) {
-      case 'moved':
+      case 'moved': {
+        const view = this.view();
+        const atExitWithoutGold =
+          view !== null &&
+          !view.hasGold &&
+          outcome.to.row === view.layout.exit.row &&
+          outcome.to.col === view.layout.exit.col;
         return [
           [
             { key: 'log.moved', params: { row: outcome.to.row, col: outcome.to.col } },
             ...(outcome.pickedGold ? [{ key: 'log.goldPicked' as const }] : []),
             ...this.perceptionLines(perceptions),
+            ...(atExitWithoutGold ? [{ key: 'log.exitNeedsGold' as const }] : []),
           ],
         ];
+      }
       case 'bumped':
         return [[{ key: 'log.bumped', params: { row: outcome.at.row, col: outcome.at.col } }]];
       case 'turned':
