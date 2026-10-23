@@ -31,10 +31,15 @@
 }
 
 .cell {
+  position: relative;
   display: grid;
   aspect-ratio: 1;
   place-items: center;
   border: 1px solid currentColor;
+}
+
+.cell > * {
+  grid-area: 1 / 1;
 }
 
 .cell-exit {
@@ -55,17 +60,59 @@
   gap: 0.5rem;
 }
 
-.hunter {
-  font-weight: 700;
+.icon {
+  width: 62%;
+  aspect-ratio: 1;
+  background-color: currentColor;
+  -webkit-mask: var(--cell-icon) center / contain no-repeat;
+  mask: var(--cell-icon) center / contain no-repeat;
 }
 
-.exit,
+.icon-exit {
+  --cell-icon: url('/assets/exit.svg');
+  opacity: 0.8;
+}
+
+.icon-hunter {
+  --cell-icon: url('/assets/hunter-arrow.svg');
+}
+
+.icon-wumpus {
+  --cell-icon: url('/assets/wumpus.svg');
+}
+
+.icon-pit {
+  --cell-icon: url('/assets/pit.svg');
+  opacity: 0.8;
+}
+
+.icon-gold {
+  --cell-icon: url('/assets/gold.svg');
+}
+
+.hint {
+  position: absolute;
+  right: 0.1rem;
+  width: 34%;
+  aspect-ratio: 1;
+  background-color: currentColor;
+  -webkit-mask: var(--cell-icon) center / contain no-repeat;
+  mask: var(--cell-icon) center / contain no-repeat;
+  opacity: 0.75;
+}
+
+.hint-stench {
+  --cell-icon: url('/assets/stench.svg');
+  top: 0.1rem;
+}
+
+.hint-breeze {
+  --cell-icon: url('/assets/breeze.svg');
+  bottom: 0.1rem;
+}
+
 .log-entry {
   font-size: 0.8rem;
-}
-
-.exit {
-  opacity: 0.6;
 }
 
 .actions {

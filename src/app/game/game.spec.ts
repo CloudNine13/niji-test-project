@@ -91,14 +91,80 @@ describe('Game', () => {
     TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
   });
 
-  it('renders the hunter with its orientation and the exit cell on the grid', () => {
+  it('renders the hunter arrow, the exit image, and no hazard images on the grid', () => {
     const fixture = create(WIN_BOARD);
     const cells = fixture.nativeElement.querySelectorAll('.cell') as NodeListOf<HTMLElement>;
 
     expect(cells.length).toBe(16);
-    expect(cells[0].textContent?.trim()).toBe('S');
-    expect(cells[15].textContent?.trim()).toBe('Exit');
-    expect(cells[5].textContent?.trim()).toBe('');
+    expect(cells[0].querySelector('.icon-hunter')).not.toBeNull();
+    expect(cells[0].textContent?.trim()).toBe('');
+    expect(cells[15].querySelector('.icon-exit')?.getAttribute('aria-label')).toBe('Exit');
+    expect(cells[5].children.length).toBe(0);
+  });
+
+  it('rotates the hunter arrow to the facing direction', () => {
+    const fixture = create(WIN_BOARD);
+    const hunter = (): HTMLElement =>
+      fixture.nativeElement.querySelector('.icon-hunter') as HTMLElement;
+
+    expect(hunter().style.transform).toBe('rotate(180deg)');
+
+    click(fixture, ['.turn-right']);
+    expect(hunter().style.transform).toBe('rotate(270deg)');
+
+    click(fixture, ['.turn-right']);
+    expect(hunter().style.transform).toBe('rotate(0deg)');
+
+    click(fixture, ['.turn-right']);
+    expect(hunter().style.transform).toBe('rotate(90deg)');
+  });
+
+  it('stacks the stench and breeze hints on the hunter cell while both are perceived', () => {
+    const fixture = create({ ...WIN_BOARD, wumpus: 4, pits: [1] });
+    const hunterCell = (): HTMLElement =>
+      fixture.nativeElement.querySelectorAll('.cell')[0] as HTMLElement;
+
+    expect(hunterCell().querySelector('.hint-stench')).not.toBeNull();
+    expect(hunterCell().querySelector('.hint-breeze')).not.toBeNull();
+  });
+
+  it('drops the stench hint once the wumpus is dead', () => {
+    const fixture = create({ ...WIN_BOARD, wumpus: 4, pits: [] });
+
+    expect(fixture.nativeElement.querySelector('.hint-stench')).not.toBeNull();
+
+    click(fixture, ['.shoot']);
+
+    expect(fixture.nativeElement.querySelector('.hint-stench')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.hint-breeze')).toBeNull();
+  });
+
+  it('hides hazards until the game is over and then reveals the whole board', () => {
+    const fixture = create(DEATH_BOARD);
+    const cell = (index: number): HTMLElement =>
+      fixture.nativeElement.querySelectorAll('.cell')[index] as HTMLElement;
+
+    expect(fixture.nativeElement.querySelector('.icon-wumpus')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.icon-pit')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.icon-gold')).toBeNull();
+
+    click(fixture, ['.advance']);
+
+    expect(cell(1).querySelector('.icon-pit')).not.toBeNull();
+    expect(cell(12).querySelector('.icon-wumpus')).not.toBeNull();
+    expect(cell(5).querySelector('.icon-gold')).not.toBeNull();
+    expect(fogged(fixture)).toEqual([]);
+  });
+
+  it('hides the collected gold from the reveal', () => {
+    const fixture = create(WIN_BOARD);
+
+    click(fixture, toExitWithGold);
+    click(fixture, ['.exit']);
+
+    expect(fixture.nativeElement.querySelector('.icon-gold')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.icon-pit')).toHaveSize(1);
+    expect(fixture.nativeElement.querySelectorAll('.icon-wumpus')).toHaveSize(1);
   });
 
   it('logs the destination coordinates and the perceptions of the move', () => {
