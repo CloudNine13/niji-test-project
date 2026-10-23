@@ -31,7 +31,7 @@ describe('Config', () => {
     expect(selects[1].value).toBe('2');
     expect(selects[2].value).toBe('1');
     expect(options(0)).toBe(7);
-    expect(options(1)).toBe(11);
+    expect(options(1)).toBe(4);
     expect(options(2)).toBe(11);
   });
 
@@ -39,14 +39,14 @@ describe('Config', () => {
     const { selects, select, options } = create();
 
     select(0, '10');
-    expect(options(1)).toBe(95);
+    expect(options(1)).toBe(21);
 
-    select(1, '94');
-    expect(selects[1].value).toBe('94');
+    select(1, '20');
+    expect(selects[1].value).toBe('20');
 
     select(0, '4');
-    expect(options(1)).toBe(11);
-    expect(selects[1].value).toBe('10');
+    expect(options(1)).toBe(4);
+    expect(selects[1].value).toBe('3');
   });
 
   it('starts a session from the selected values and opens the game route', async () => {
@@ -66,14 +66,14 @@ describe('Config', () => {
     expect(TestBed.inject(Router).url).toBe('/game');
   });
 
-  it('pre-selects the stored configuration of the previous game', () => {
+  it('pre-selects the stored configuration and clamps its pits to the cap', () => {
     TestBed.inject(GameSessionService).config.set({ size: 8, pits: 40, arrows: 4 });
 
     const { selects, options } = create();
 
     expect(selects[0].value).toBe('8');
-    expect(selects[1].value).toBe('40');
+    expect(selects[1].value).toBe('12');
     expect(selects[2].value).toBe('4');
-    expect(options(1)).toBe(59);
+    expect(options(1)).toBe(13);
   });
 });
