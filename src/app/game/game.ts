@@ -33,6 +33,7 @@ interface GameView {
   readonly layout: BoardLayout;
   readonly perceptions: Perceptions;
   readonly hasGold: boolean;
+  readonly wumpusAlive: boolean;
 }
 
 interface LogLine {
@@ -113,7 +114,7 @@ export class Game {
         index,
         hunter,
         exit: exit === index && !fogged,
-        wumpus: revealAll && index === wumpus,
+        wumpus: revealAll && view.wumpusAlive && index === wumpus,
         pit: revealAll && pits.has(index),
         gold: revealAll && !view.hasGold && index === gold,
         stench: hunter && perceptions.stench,
@@ -223,6 +224,7 @@ export class Game {
       layout: engine.layout,
       perceptions: engine.perceptions,
       hasGold: engine.hasGold,
+      wumpusAlive: engine.wumpusAlive,
     });
   }
 

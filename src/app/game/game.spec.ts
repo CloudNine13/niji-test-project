@@ -331,6 +331,24 @@ describe('Game', () => {
     expect(fixture.nativeElement.querySelectorAll('.icon-wumpus')).toHaveSize(1);
   });
 
+  it('keeps the dead wumpus hidden in the fog-on reveal', () => {
+    const fixture = create(WUMPUS_IN_LINE_BOARD);
+
+    click(fixture, ['.shoot']);
+    fogToggle(fixture).click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.icon-wumpus')).toBeNull();
+  });
+
+  it('hides the dead wumpus from the game-over reveal', () => {
+    const fixture = create(WUMPUS_IN_LINE_BOARD);
+
+    click(fixture, ['.shoot', '.turn-right', '.advance', '.advance']);
+
+    expect(fixture.nativeElement.querySelector('.icon-wumpus')).toBeNull();
+  });
+
   it('toggles the fog on and off mid-game', () => {
     const fixture = create(WIN_BOARD);
     const toggle = fogToggle(fixture);
