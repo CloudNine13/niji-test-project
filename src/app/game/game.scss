@@ -66,8 +66,7 @@
   background: var(--cell-icon) center / contain no-repeat;
 }
 
-.icon-hunter,
-.icon-pit {
+.icon-hunter {
   background-color: currentColor;
   background-image: none;
   -webkit-mask: var(--cell-icon) center / contain no-repeat;
@@ -88,7 +87,7 @@
 }
 
 .icon-pit {
-  --cell-icon: url('/assets/pit.svg');
+  --cell-icon: url('/assets/pit.png');
   opacity: 0.8;
 }
 

@@ -9,7 +9,7 @@ const ARROW_OPTIONS: readonly number[] = Array.from({ length: 11 }, (_, index) =
 const DEFAULT_SIZE = 4;
 const DEFAULT_PITS = 2;
 const DEFAULT_ARROWS = 1;
-const PIT_SLACK = 6;
+const MAX_PIT_RATIO = 0.2;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +24,7 @@ export class Config {
   readonly size = signal(DEFAULT_SIZE);
   readonly pits = signal(DEFAULT_PITS);
   readonly arrows = signal(DEFAULT_ARROWS);
-  readonly maxPits = computed(() => this.size() ** 2 - PIT_SLACK);
+  readonly maxPits = computed(() => Math.floor(this.size() ** 2 * MAX_PIT_RATIO));
   readonly pitOptions = computed(() =>
     Array.from({ length: this.maxPits() + 1 }, (_, index) => index),
   );
@@ -36,7 +36,7 @@ export class Config {
     const stored = this.session.config();
     if (stored) {
       this.size.set(stored.size);
-      this.pits.set(stored.pits);
+      this.pits.set(Math.min(stored.pits, this.maxPits()));
       this.arrows.set(stored.arrows);
     }
   }

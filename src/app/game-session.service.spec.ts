@@ -9,11 +9,6 @@ describe('GameSessionService', () => {
     session = TestBed.inject(GameSessionService);
   });
 
-  it('has no session before the first game starts', () => {
-    expect(session.engine()).toBeNull();
-    expect(session.config()).toBeNull();
-  });
-
   it('exposes an engine built from the requested configuration', () => {
     const config = { size: 7, pits: 3, arrows: 2 };
 

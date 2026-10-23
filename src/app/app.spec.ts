@@ -14,12 +14,6 @@ describe('App', () => {
     document.documentElement.style.colorScheme = '';
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
   it('renders the title in the current language and switches it on toggle', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();

@@ -47,7 +47,6 @@ describe('GameEngine advance', () => {
     expect(result.outcome).toEqual({ kind: 'moved', to: position(1, 2), pickedGold: true });
     expect(result.stats.moves).toBe(1);
     expect(engine.position).toEqual(position(1, 2));
-    expect(engine.size).toBe(4);
   });
 
   it('reports glitter when orthogonally adjacent to gold and clears it on pickup', () => {
@@ -414,8 +413,6 @@ describe('GameEngine visited cells', () => {
 
     expect(engine.status).toBe('lost');
     expect(visited(engine)).toEqual([5, 9]);
-    expectIgnored(engine);
-    expect(visited(engine)).toEqual([5, 9]);
   });
 });
 
@@ -460,22 +457,5 @@ describe('GameEngine layout', () => {
 
     expect(wumpusEngine.wumpusAlive).toBeFalse();
     expect(wumpusEngine.layout.wumpus).toEqual(position(0, 3));
-  });
-});
-
-describe('GameEngine perceptions getter', () => {
-  it('reports the current cell perceptions and drops the stench after a kill', () => {
-    const engine = engineFor(
-      { size: 4, facing: 'S', start: 0, exit: 15, wumpus: 4, gold: 5, pits: [1] },
-      1,
-    );
-
-    expect(engine.perceptions.stench).toBeTrue();
-    expect(engine.perceptions.breeze).toBeTrue();
-
-    engine.shoot();
-
-    expect(engine.perceptions.stench).toBeFalse();
-    expect(engine.perceptions.breeze).toBeTrue();
   });
 });

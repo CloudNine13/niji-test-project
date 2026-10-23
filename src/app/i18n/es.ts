@@ -36,6 +36,7 @@ export const es: Record<TranslationKey, string> = {
   'log.deathWumpus': 'El Wumpus te devoró en ({row},{col}).',
   'log.escaped': 'Escapaste por la salida.',
   'log.ignored': 'La partida ha terminado.',
+  'log.exitNeedsGold': 'Estás en la salida, pero necesitas el oro para escapar.',
   'perception.stench': 'Hueles algo terrible.',
   'perception.breeze': 'Sientes una brisa.',
   'perception.glitter': 'Ves un brillo dorado.',
