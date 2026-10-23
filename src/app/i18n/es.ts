@@ -43,4 +43,10 @@ export const es: Record<TranslationKey, string> = {
   'perception.bump': 'Oyes un golpe.',
   'game.won': 'Escapaste con el oro en {actions} acciones, {time}',
   'grid.exit': 'Salida',
+  'grid.hunter': 'Cazador',
+  'grid.wumpus': 'Wumpus',
+  'grid.pit': 'Foso',
+  'grid.gold': 'Oro',
+  'grid.stench': 'Hedor',
+  'grid.breeze': 'Brisa',
 };

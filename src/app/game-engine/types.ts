@@ -33,6 +33,15 @@ export interface Perceptions {
 
 export type GameStatus = 'playing' | 'won' | 'lost';
 
+export interface BoardLayout {
+  readonly size: number;
+  readonly hunter: Position;
+  readonly exit: Position;
+  readonly wumpus: Position;
+  readonly gold: Position;
+  readonly pits: readonly Position[];
+}
+
 export interface GameStats {
   readonly moves: number;
   readonly turns: number;

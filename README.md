@@ -50,3 +50,9 @@ npm test -- --watch=false --browsers=ChromeHeadless
 
 If Karma cannot find Chrome, export `CHROME_BIN` (for example
 `export CHROME_BIN=/usr/bin/google-chrome`).
+
+## Credits
+
+The interface icons (hunter arrow, exit, Wumpus, pit, gold, stench, breeze, sun and moon) are from
+[Tabler Icons](https://github.com/tabler/tabler-icons) by Paweł Kuna, used under the
+[MIT license](https://github.com/tabler/tabler-icons/blob/main/LICENSE).

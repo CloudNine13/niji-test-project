@@ -23,14 +23,46 @@
         {{ i18n.t(fogOn() ? 'game.fogOn' : 'game.fogOff') }}
       </button>
     </div>
-    <div class="board" [style.grid-template-columns]="'repeat(' + view.size + ', 1fr)'">
+    <div class="board" [style.grid-template-columns]="'repeat(' + view.size + ', minmax(0, 1fr))'">
       @for (cell of cells(); track cell.index) {
         <div class="cell" [class.cell-exit]="cell.exit" [class.cell-fog]="cell.fogged">
           @if (cell.exit) {
-            <span class="exit">{{ i18n.t('grid.exit') }}</span>
+            <span class="icon icon-exit" role="img" [attr.aria-label]="i18n.t('grid.exit')"></span>
+          }
+          @if (cell.wumpus) {
+            <span
+              class="icon icon-wumpus"
+              role="img"
+              [attr.aria-label]="i18n.t('grid.wumpus')"
+            ></span>
+          }
+          @if (cell.pit) {
+            <span class="icon icon-pit" role="img" [attr.aria-label]="i18n.t('grid.pit')"></span>
+          }
+          @if (cell.gold) {
+            <span class="icon icon-gold" role="img" [attr.aria-label]="i18n.t('grid.gold')"></span>
           }
           @if (cell.hunter) {
-            <span class="hunter">{{ directionLabel(view.direction) }}</span>
+            <span
+              class="icon icon-hunter"
+              role="img"
+              [style.transform]="hunterRotation(view.direction)"
+              [attr.aria-label]="i18n.t('grid.hunter')"
+            ></span>
+            @if (cell.stench) {
+              <span
+                class="hint hint-stench"
+                role="img"
+                [attr.aria-label]="i18n.t('grid.stench')"
+              ></span>
+            }
+            @if (cell.breeze) {
+              <span
+                class="hint hint-breeze"
+                role="img"
+                [attr.aria-label]="i18n.t('grid.breeze')"
+              ></span>
+            }
           }
         </div>
       }

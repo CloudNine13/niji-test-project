@@ -411,3 +411,64 @@ describe('GameEngine visited cells', () => {
     expect(visited(engine)).toEqual([5, 9]);
   });
 });
+
+describe('GameEngine layout', () => {
+  it('exposes the seeded board and follows the hunter', () => {
+    const engine = engineFor(
+      { size: 5, facing: 'S', start: 0, exit: 24, wumpus: 12, gold: 7, pits: [3, 18] },
+      1,
+    );
+
+    expect(engine.layout).toEqual({
+      size: 5,
+      hunter: position(0, 0),
+      exit: position(4, 4),
+      wumpus: position(2, 2),
+      gold: position(1, 2),
+      pits: [position(0, 3), position(3, 3)],
+    });
+
+    engine.advance();
+
+    expect(engine.layout.hunter).toEqual(position(1, 0));
+    expect(engine.layout.pits).toEqual([position(0, 3), position(3, 3)]);
+  });
+
+  it('keeps the gold and wumpus positions once the gold is held and the wumpus is dead', () => {
+    const goldEngine = engineFor(
+      { size: 4, facing: 'S', start: 0, exit: 15, wumpus: 12, gold: 4, pits: [9] },
+      1,
+    );
+    goldEngine.advance();
+
+    expect(goldEngine.hasGold).toBeTrue();
+    expect(goldEngine.layout.gold).toEqual(position(1, 0));
+    expect(goldEngine.perceptions.glitter).toBeFalse();
+
+    const wumpusEngine = engineFor(
+      { size: 4, facing: 'E', start: 0, exit: 15, wumpus: 3, gold: 5, pits: [9] },
+      1,
+    );
+    wumpusEngine.shoot();
+
+    expect(wumpusEngine.wumpusAlive).toBeFalse();
+    expect(wumpusEngine.layout.wumpus).toEqual(position(0, 3));
+  });
+});
+
+describe('GameEngine perceptions getter', () => {
+  it('reports the current cell perceptions and drops the stench after a kill', () => {
+    const engine = engineFor(
+      { size: 4, facing: 'S', start: 0, exit: 15, wumpus: 4, gold: 5, pits: [1] },
+      1,
+    );
+
+    expect(engine.perceptions.stench).toBeTrue();
+    expect(engine.perceptions.breeze).toBeTrue();
+
+    engine.shoot();
+
+    expect(engine.perceptions.stench).toBeFalse();
+    expect(engine.perceptions.breeze).toBeTrue();
+  });
+});

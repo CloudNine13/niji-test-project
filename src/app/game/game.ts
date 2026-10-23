@@ -12,11 +12,11 @@ import { Router } from '@angular/router';
 import { GameEngine } from '../game-engine/game-engine';
 import type {
   ActionResult,
+  BoardLayout,
   Direction,
   GameStats,
   GameStatus,
   Perceptions,
-  Position,
 } from '../game-engine/types';
 import { GameSessionService } from '../game-session.service';
 import type { TranslationKey } from '../i18n/en';
@@ -24,14 +24,15 @@ import { I18nService, type TranslationParams } from '../i18n/i18n.service';
 
 interface GameView {
   readonly size: number;
-  readonly position: Position;
   readonly direction: Direction;
-  readonly exitPosition: Position;
   readonly arrowsLeft: number;
   readonly status: GameStatus;
   readonly stats: GameStats;
   readonly canExit: boolean;
   readonly visitedCells: ReadonlySet<number>;
+  readonly layout: BoardLayout;
+  readonly perceptions: Perceptions;
+  readonly hasGold: boolean;
 }
 
 interface LogLine {
@@ -45,6 +46,11 @@ interface Cell {
   readonly hunter: boolean;
   readonly exit: boolean;
   readonly fogged: boolean;
+  readonly wumpus: boolean;
+  readonly pit: boolean;
+  readonly gold: boolean;
+  readonly stench: boolean;
+  readonly breeze: boolean;
 }
 
 const DIRECTION_KEYS: Readonly<Record<Direction, TranslationKey>> = {
@@ -52,6 +58,13 @@ const DIRECTION_KEYS: Readonly<Record<Direction, TranslationKey>> = {
   E: 'dir.E',
   S: 'dir.S',
   W: 'dir.W',
+};
+
+const HUNTER_ROTATIONS: Readonly<Record<Direction, string>> = {
+  N: 'rotate(0deg)',
+  E: 'rotate(90deg)',
+  S: 'rotate(180deg)',
+  W: 'rotate(270deg)',
 };
 
 const TICK_MS = 1000;
@@ -84,17 +97,27 @@ export class Game {
     if (!view) {
       return [];
     }
+    const { size, layout, perceptions } = view;
     const fog = this.fogOn();
-    return Array.from({ length: view.size ** 2 }, (_, index) => {
-      const row = Math.floor(index / view.size);
-      const col = index % view.size;
-      const hunter = view.position.row === row && view.position.col === col;
-      const exit = view.exitPosition.row === row && view.exitPosition.col === col;
+    const revealed = view.status !== 'playing';
+    const pits = new Set(layout.pits.map((pit) => pit.row * size + pit.col));
+    const wumpus = layout.wumpus.row * size + layout.wumpus.col;
+    const gold = layout.gold.row * size + layout.gold.col;
+    return Array.from({ length: size ** 2 }, (_, index) => {
+      const row = Math.floor(index / size);
+      const col = index % size;
+      const hunter = layout.hunter.row === row && layout.hunter.col === col;
+      const exit = layout.exit.row === row && layout.exit.col === col;
       return {
         index,
         hunter,
         exit,
-        fogged: fog && !hunter && !exit && !view.visitedCells.has(index),
+        wumpus: revealed && index === wumpus,
+        pit: revealed && pits.has(index),
+        gold: revealed && !view.hasGold && index === gold,
+        stench: hunter && perceptions.stench,
+        breeze: hunter && perceptions.breeze,
+        fogged: !revealed && fog && !hunter && !exit && !view.visitedCells.has(index),
       };
     });
   });
@@ -116,6 +139,10 @@ export class Game {
 
   directionLabel(direction: Direction): string {
     return this.i18n.t(DIRECTION_KEYS[direction]);
+  }
+
+  hunterRotation(direction: Direction): string {
+    return HUNTER_ROTATIONS[direction];
   }
 
   entryText(entry: readonly LogLine[]): string {
@@ -185,14 +212,15 @@ export class Game {
     }
     this.view.set({
       size: engine.size,
-      position: engine.position,
       direction: engine.direction,
-      exitPosition: engine.exitPosition,
       arrowsLeft: engine.arrowsLeft,
       status: engine.status,
       stats: engine.stats,
       canExit: engine.canExit(),
       visitedCells: engine.visitedCells,
+      layout: engine.layout,
+      perceptions: engine.perceptions,
+      hasGold: engine.hasGold,
     });
   }
 

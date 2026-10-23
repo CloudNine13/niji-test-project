@@ -2,6 +2,7 @@ import { Board, generateBoard } from './board-generator';
 import {
   ActionOutcome,
   ActionResult,
+  BoardLayout,
   DIRECTION_DELTAS,
   DIRECTIONS,
   Direction,
@@ -17,7 +18,8 @@ export class GameEngine {
   readonly #exit: Position;
   readonly #wumpus: Position;
   readonly #pits: ReadonlySet<number>;
-  #gold: Position | null;
+  readonly #pitPositions: readonly Position[];
+  readonly #gold: Position;
   #position: Position;
   #direction: Direction;
   #hasGold = false;
@@ -33,6 +35,7 @@ export class GameEngine {
     this.#exit = board.exit;
     this.#wumpus = board.wumpus;
     this.#pits = new Set(board.pits.map((pit) => this.#index(pit)));
+    this.#pitPositions = board.pits;
     this.#gold = board.gold;
     this.#position = board.start;
     this.#direction = board.startDirection;
@@ -80,6 +83,21 @@ export class GameEngine {
     return this.#visited;
   }
 
+  get layout(): BoardLayout {
+    return {
+      size: this.#size,
+      hunter: this.#position,
+      exit: this.#exit,
+      wumpus: this.#wumpus,
+      gold: this.#gold,
+      pits: this.#pitPositions,
+    };
+  }
+
+  get perceptions(): Perceptions {
+    return this.#perceptions();
+  }
+
   canExit(): boolean {
     return this.#hasGold && this.#sameCell(this.#position, this.#exit);
   }
@@ -108,10 +126,9 @@ export class GameEngine {
       return this.#result({ kind: 'killed-by-wumpus', at: target });
     }
 
-    const pickedGold = this.#gold !== null && this.#sameCell(target, this.#gold);
+    const pickedGold = !this.#hasGold && this.#sameCell(target, this.#gold);
     if (pickedGold) {
       this.#hasGold = true;
-      this.#gold = null;
     }
     return this.#result({ kind: 'moved', to: target, pickedGold }, { glitter: pickedGold });
   }
@@ -181,7 +198,7 @@ export class GameEngine {
     return {
       stench: this.#wumpusAlive && adjacent.some((cell) => this.#sameCell(cell, this.#wumpus)),
       breeze: adjacent.some((cell) => this.#pits.has(this.#index(cell))),
-      glitter: this.#gold !== null && this.#sameCell(this.#position, this.#gold),
+      glitter: !this.#hasGold && this.#sameCell(this.#position, this.#gold),
       bump: false,
       scream: false,
     };
