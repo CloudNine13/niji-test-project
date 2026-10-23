@@ -1,5 +1,5 @@
 import { GameEngine } from './game-engine';
-import { engineFor, position, ScriptedBoard } from './testing/engine-fixtures';
+import { engineFor, indexOf, position, ScriptedBoard } from './testing/engine-fixtures';
 
 function expectIgnored(engine: GameEngine): void {
   const before = {
@@ -355,5 +355,59 @@ describe('GameEngine stats', () => {
     expect(engine.turnLeft().stats).toEqual({ moves: 1, turns: 2, shots: 1 });
     expect(engine.advance().stats).toEqual({ moves: 1, turns: 2, shots: 1 });
     expect(engine.stats).toEqual({ moves: 1, turns: 2, shots: 1 });
+  });
+});
+
+describe('GameEngine visited cells', () => {
+  const goldAhead: ScriptedBoard = {
+    size: 4,
+    facing: 'E',
+    start: 5,
+    exit: 15,
+    wumpus: 12,
+    gold: 6,
+    pits: [9],
+  };
+
+  const visited = (engine: GameEngine): readonly number[] =>
+    Array.from(engine.visitedCells).sort((a, b) => a - b);
+
+  it('starts with only the starting cell visited', () => {
+    const engine = engineFor(goldAhead, 1);
+
+    expect(visited(engine)).toEqual([indexOf(position(1, 1), 4)]);
+  });
+
+  it('adds the destination of every advance', () => {
+    const engine = engineFor(goldAhead, 1);
+
+    engine.advance();
+    engine.advance();
+
+    expect(visited(engine)).toEqual([5, 6, 7]);
+  });
+
+  it('adds no cell for bumps, turns or shots', () => {
+    const engine = engineFor({ ...goldAhead, start: 7 }, 1);
+
+    expect(engine.advance().outcome).toEqual({ kind: 'bumped', at: position(1, 3) });
+    engine.turnLeft();
+    engine.shoot();
+
+    expect(visited(engine)).toEqual([7]);
+  });
+
+  it('keeps the visited set after the game ends', () => {
+    const engine = engineFor(
+      { size: 4, facing: 'S', start: 5, exit: 15, wumpus: 0, gold: 2, pits: [9] },
+      1,
+    );
+
+    engine.advance();
+
+    expect(engine.status).toBe('lost');
+    expect(visited(engine)).toEqual([5, 9]);
+    expectIgnored(engine);
+    expect(visited(engine)).toEqual([5, 9]);
   });
 });

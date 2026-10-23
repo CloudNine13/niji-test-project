@@ -68,6 +68,14 @@ describe('Game', () => {
       (line) => line.textContent?.trim() ?? '',
     );
 
+  const fogged = (fixture: ComponentFixture<Game>): readonly number[] =>
+    Array.from(fixture.nativeElement.querySelectorAll('.cell') as NodeListOf<HTMLElement>)
+      .map((cell, index) => (cell.classList.contains('cell-fog') ? index : -1))
+      .filter((index) => index >= 0);
+
+  const fogToggle = (fixture: ComponentFixture<Game>): HTMLButtonElement =>
+    fixture.nativeElement.querySelector('.fog-toggle') as HTMLButtonElement;
+
   const toExitWithGold = [
     '.advance',
     '.turn-left',
@@ -164,5 +172,56 @@ describe('Game', () => {
     await TestBed.inject(Router).navigateByUrl('/game');
 
     expect(TestBed.inject(Router).url).toBe('/setup');
+  });
+
+  it('fogs every unvisited cell except the hunter and the exit', () => {
+    const fixture = create(WIN_BOARD);
+    const cells = fogged(fixture);
+
+    expect(cells).toHaveSize(14);
+    expect(cells).not.toContain(0);
+    expect(cells).not.toContain(15);
+  });
+
+  it('reveals only the cells reached by an advance', () => {
+    const fixture = create(WIN_BOARD);
+
+    click(fixture, ['.advance']);
+    expect(fogged(fixture)).toHaveSize(13);
+    expect(fogged(fixture)).not.toContain(4);
+
+    click(fixture, ['.advance']);
+    expect(fogged(fixture)).toHaveSize(12);
+    expect(fogged(fixture)).not.toContain(8);
+  });
+
+  it('keeps the fog unchanged across bumps and turns', () => {
+    const fixture = create({ ...WIN_BOARD, facing: 'N' });
+    const before = fogged(fixture);
+
+    click(fixture, ['.advance', '.turn-right']);
+
+    expect(fogged(fixture)).toEqual(before);
+  });
+
+  it('lifts the fog from every cell when the switch is off', () => {
+    const fixture = create(WIN_BOARD);
+    const toggle = fogToggle(fixture);
+
+    expect(toggle.textContent?.trim()).toBe('Fog of war: on');
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(fogged(fixture)).toEqual([]);
+    expect(toggle.textContent?.trim()).toBe('Fog of war: off');
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(fogged(fixture)).toHaveSize(14);
+    expect(toggle.textContent?.trim()).toBe('Fog of war: on');
   });
 });

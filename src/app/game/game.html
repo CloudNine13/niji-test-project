@@ -18,9 +18,14 @@
         <dd>{{ view.stats.shots }}</dd>
       </div>
     </dl>
+    <div class="controls">
+      <button type="button" class="fog-toggle" [attr.aria-pressed]="fogOn()" (click)="toggleFog()">
+        {{ i18n.t(fogOn() ? 'game.fogOn' : 'game.fogOff') }}
+      </button>
+    </div>
     <div class="board" [style.grid-template-columns]="'repeat(' + view.size + ', 1fr)'">
       @for (cell of cells(); track cell.index) {
-        <div class="cell" [class.cell-exit]="cell.exit">
+        <div class="cell" [class.cell-exit]="cell.exit" [class.cell-fog]="cell.fogged">
           @if (cell.exit) {
             <span class="exit">{{ i18n.t('grid.exit') }}</span>
           }

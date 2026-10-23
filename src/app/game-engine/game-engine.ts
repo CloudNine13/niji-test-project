@@ -25,6 +25,7 @@ export class GameEngine {
   #wumpusAlive = true;
   #status: GameStatus = 'playing';
   #stats: GameStats = { moves: 0, turns: 0, shots: 0 };
+  readonly #visited = new Set<number>();
 
   constructor(config: GameConfig) {
     const board: Board = generateBoard(config);
@@ -35,6 +36,7 @@ export class GameEngine {
     this.#gold = board.gold;
     this.#position = board.start;
     this.#direction = board.startDirection;
+    this.#visited.add(this.#index(board.start));
     this.#arrowsLeft = config.arrows;
   }
 
@@ -74,6 +76,10 @@ export class GameEngine {
     return this.#size;
   }
 
+  get visitedCells(): ReadonlySet<number> {
+    return this.#visited;
+  }
+
   canExit(): boolean {
     return this.#hasGold && this.#sameCell(this.#position, this.#exit);
   }
@@ -90,6 +96,7 @@ export class GameEngine {
     }
 
     this.#position = target;
+    this.#visited.add(this.#index(target));
     this.#stats = { ...this.#stats, moves: this.#stats.moves + 1 };
 
     if (this.#pits.has(this.#index(target))) {
