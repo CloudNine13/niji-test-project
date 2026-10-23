@@ -63,6 +63,13 @@
                 [attr.aria-label]="i18n.t('grid.breeze')"
               ></span>
             }
+            @if (cell.glint) {
+              <span
+                class="hint hint-glint"
+                role="img"
+                [attr.aria-label]="i18n.t('grid.glint')"
+              ></span>
+            }
           }
         </div>
       }

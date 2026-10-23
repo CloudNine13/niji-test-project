@@ -47,6 +47,7 @@ export const en = {
   'grid.gold': 'Gold',
   'grid.stench': 'Stench',
   'grid.breeze': 'Breeze',
+  'grid.glint': 'Glint',
 } as const;
 
 export type TranslationKey = keyof typeof en;

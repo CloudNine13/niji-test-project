@@ -51,6 +51,7 @@ interface Cell {
   readonly gold: boolean;
   readonly stench: boolean;
   readonly breeze: boolean;
+  readonly glint: boolean;
 }
 
 const DIRECTION_KEYS: Readonly<Record<Direction, TranslationKey>> = {
@@ -117,6 +118,7 @@ export class Game {
         gold: revealed && !view.hasGold && index === gold,
         stench: hunter && perceptions.stench,
         breeze: hunter && perceptions.breeze,
+        glint: hunter && perceptions.glitter,
         fogged: !revealed && fog && !hunter && !exit && !view.visitedCells.has(index),
       };
     });

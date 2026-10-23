@@ -31,7 +31,7 @@ const BREEZE_BOARD: ScriptedBoard = {
   start: 0,
   exit: 15,
   wumpus: 12,
-  gold: 5,
+  gold: 6,
   pits: [8],
 };
 
@@ -137,6 +137,19 @@ describe('Game', () => {
 
     expect(fixture.nativeElement.querySelector('.hint-stench')).toBeNull();
     expect(fixture.nativeElement.querySelector('.hint-breeze')).toBeNull();
+  });
+
+  it('shows the glint hint only while the gold is adjacent', () => {
+    const fixture = create({ ...WIN_BOARD, gold: 1, pits: [] });
+
+    expect(
+      fixture.nativeElement.querySelector('.hint-glint')?.getAttribute('aria-label'),
+    ).toBe('Glint');
+
+    click(fixture, ['.turn-left', '.advance']);
+
+    expect(fixture.nativeElement.querySelector('.hint-glint')).toBeNull();
+    expect(logLines(fixture).at(-1)).toBe('Moved to (0,1). You picked up the gold.');
   });
 
   it('hides hazards until the game is over and then reveals the whole board', () => {
