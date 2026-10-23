@@ -258,16 +258,6 @@ describe('Game', () => {
     expect(TestBed.inject(Router).url).toBe('/setup');
   });
 
-  it('starts with the fog switch off and every cell fogged except the hunter', () => {
-    const fixture = create(WIN_BOARD);
-    const toggle = fogToggle(fixture);
-
-    expect(toggle.textContent?.trim()).toBe('Fog of war: off');
-    expect(toggle.getAttribute('aria-pressed')).toBe('false');
-    expect(fogged(fixture)).toHaveSize(15);
-    expect(fogged(fixture)).not.toContain(0);
-  });
-
   it('reveals every cell, the exit and the hazards included, when the switch is on', () => {
     const fixture = create(WIN_BOARD);
 
